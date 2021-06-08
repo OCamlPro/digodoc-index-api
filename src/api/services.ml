@@ -11,3 +11,10 @@ let version : (version, exn, no_security) service0 =
     ~name:"version"
     ~output:version
     Path.(root // "version")
+
+let generate : (response, exn, no_security) service0 =
+  service
+    ~section:section_main
+    ~name:"generate"
+    ~output:response_enc
+    Path.(root // "generate")

@@ -2,18 +2,27 @@
  (name api_services)
  (wrapped false)
  (modules encoding services)
+ (preprocess (pps ppx_deriving_encoding))
  (libraries ez_api data_common))
 
 (library
  (name api_lib)
  (wrapped false)
  (modules handlers api)
- (libraries ez_api.server api_services db_lwt))
+ (libraries ez_api.server api_services db_lwt indexer))
+
+(library
+ (name indexer)
+ (wrapped false)
+ (modules index)
+ (libraries ez_file data_common db_lwt)
+ (preprocess (pps pgocaml_ppx lwt_ppx)))
 
 (executable
  (name api_server)
  (modules api_server)
- (libraries api_lib))
+ (libraries api_lib indexer)
+ (preprocess (pps pgocaml_ppx lwt_ppx)))
 
 (executable
  (name openapi)

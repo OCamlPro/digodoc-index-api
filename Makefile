@@ -1,7 +1,7 @@
 PROJECT_NAME:=digodoc-indexer
 DATABASE:=digodoc
-API_HOST:=http://localhost:8080
-API_PORT:=8080
+API_HOST:=http://localhost:49002
+API_PORT:=49002
 RLS_DIR:=www
 CONTACT_EMAIL:=
 VERSION:=1.0

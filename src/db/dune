@@ -10,4 +10,4 @@
  (modules misc_db monad_lwt db_lwt db)
  (libraries lwt.unix data_common versions)
  (preprocessor_deps (env_var PGDATABASE))
- (preprocess (pps pgocaml_ppx)))
+ (preprocess (pps pgocaml_ppx lwt_ppx)))

@@ -15,3 +15,7 @@ let info_encoding = conv
     (fun www_apis -> {www_apis}) @@
   obj1
     (req "apis" (list string))
+
+type response = Data_types.response = {
+  generated : bool;
+} [@@deriving json_encoding]
