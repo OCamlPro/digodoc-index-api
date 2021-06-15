@@ -62,7 +62,7 @@ let pkg_of_mdl mdl =
 let library_of_string s =
   let lib_name, s = EzString.cut_at s '@' in
   let lib_opam_name, lib_opam_version = EzString.cut_at s '.' in
-  { lib_name ; lib_opam_name ; lib_opam_version }
+  { lib_id = Int32.of_int 0; lib_name ; lib_opam_name ; lib_opam_version }
 
 let read_entry file =
   match EzFile.read_lines_to_list file with
@@ -84,7 +84,7 @@ let read_entry file =
     lib_name ;
     lib_opam_name ;
     lib_opam_version ;
-  ] -> Library { lib_name ; lib_opam_name ; lib_opam_version }
+  ] -> Library { lib_id = Int32.of_int 0 ; lib_name ; lib_opam_name ; lib_opam_version }
   | "module" ::
     mdl_name ::
     mdl_opam_name ::
@@ -107,8 +107,12 @@ let fill_opam_index state =
     ) state
 
 let fill_library_index state =
+  let cpt = ref 0 in 
   Lwt_list.iter_s (function 
     | Library lib ->
+      let lib_id = Int32.of_int !cpt in
+      lib.lib_id <- lib_id;
+      cpt:= !cpt + 1;
       insert_lib lib
     | _ -> Lwt.return_unit
     ) state

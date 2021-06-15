@@ -38,7 +38,8 @@ let init () =
       )|};
 
       {|create table library_index(
-        lib_name varchar primary key,
+        lib_id int primary key,
+        lib_name varchar not null,
         lib_opam varchar not null references opam_index(opam_name)
       )|};
 
@@ -56,8 +57,9 @@ let init () =
 
       {|create table module_libraries(
         mdl_id int not null references module_index(mdl_id),
-        mdl_lib varchar not null references library_index(lib_name),
-        primary key (mdl_id, mdl_lib)
+        mdl_lib_id int not null references library_index(lib_id),
+        mdl_lib varchar not null, 
+        primary key (mdl_id, mdl_lib_id)
       )|};
 
     ]
@@ -66,7 +68,7 @@ let init () =
       {|ALTER TABLE meta_index DROP CONSTRAINT meta_index_meta_opam_fkey|};
       {|ALTER TABLE module_index DROP CONSTRAINT module_index_mdl_opam_fkey|};
       {|ALTER TABLE module_libraries DROP CONSTRAINT module_libraries_mdl_id_fkey|};
-      {|ALTER TABLE module_libraries DROP CONSTRAINT module_libraries_mdl_lib_fkey|};
+      {|ALTER TABLE module_libraries DROP CONSTRAINT module_libraries_mdl_lib_id_fkey|};
 
       {|drop table opam_index|};
       {|drop table library_index|};

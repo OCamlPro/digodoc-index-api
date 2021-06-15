@@ -14,6 +14,7 @@ type opam_entry = {
 }
 
 type library_entry = {
+  mutable lib_id : int32;
   lib_name : string ;
   lib_opam_name : string ;
   lib_opam_version : string;

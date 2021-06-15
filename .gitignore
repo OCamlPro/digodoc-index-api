@@ -1,4 +1,5 @@
 bin
+logs
 *.merlin
 _build
 _opam
