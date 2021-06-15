@@ -148,11 +148,21 @@ let fill_module_index state =
           Printf.sprintf "%s.%s" pack alias
     in
 
-    (* DB *)
     let mdl_id = Int32.of_int !cpt in
     mdl.mdl_id <- mdl_id;
     mdl.mdl_path <- mdl_path;
     cpt:= !cpt + 1;
+
+    (* Find id for every library *)
+    List.iter (fun lib1 -> 
+      List.iter (fun entry ->
+        match entry with
+        | Library lib2 when String.equal lib1.lib_name lib2.lib_name 
+                         && String.equal lib1.lib_opam_name lib2.lib_opam_name ->
+          lib1.lib_id <- lib2.lib_id
+        | _ -> ()
+          ) state) mdl.mdl_libs;
+
     insert_module mdl
 
   in
