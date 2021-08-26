@@ -134,17 +134,17 @@ let fill_module_index state =
 
     let mdl_path, _ =
       if alias = "" then
-        Printf.sprintf "%s/%s/index.html" pkg mdl.mdl_name, mdl.mdl_name
+        Printf.sprintf "docs/%s/%s/index.html" pkg mdl.mdl_name, mdl.mdl_name
       else
         (* In general, when we have a packed module M__N,
            M is generated and contains an alias N = M__N.
            However, when M already exists (written by the user),
            then the generated module is called M__. *)
-        let path = Printf.sprintf "%s/%s__/%s/index.html" pkg pack alias in
+        let path = Printf.sprintf "docs/%s/%s__/%s/index.html" pkg pack alias in
         if Sys.file_exists (PConfig.digodoc_dir // path) then
           path, Printf.sprintf "%s__.%s" pack alias
         else
-          Printf.sprintf "%s/%s/%s/index.html" pkg pack alias,
+          Printf.sprintf "docs/%s/%s/%s/index.html" pkg pack alias,
           Printf.sprintf "%s.%s" pack alias
     in
 
