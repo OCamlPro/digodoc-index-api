@@ -93,9 +93,26 @@ let read_entry file =
     mdl_libs ->
       let mdl_libs = List.map library_of_string mdl_libs in
       Module { mdl_id = Int32.of_int 0; mdl_path = ""; mdl_name ; mdl_opam_name ; mdl_opam_version ;
-               mdl_basename ; mdl_libs }
+               mdl_basename ; mdl_libs; mdl_vals = [] }
   | _lines ->
       Printf.eprintf "Unrecognized format for entry file %S\n%!" file;
+      raise Not_found
+
+let read_val file =
+  match EzFile.read_lines_to_list file with
+  | mdl_name ::
+    mdl_opam_name ::
+    mdl_opam_version ::
+    mdl_vals ->
+      let rec separate l acc =
+        match l with
+        | [] -> List.rev acc
+        | x::y::ll -> separate ll ((x,y)::acc)
+        | _ -> failwith "should not occur"
+      in
+        separate mdl_vals []
+  | _lines ->
+      Printf.eprintf "Unrecognized format for val file %S\n%!" file;
       raise Not_found
 
 
@@ -130,6 +147,7 @@ let fill_module_index state =
   let cpt = ref 0 in
 
   let add_module pack alias mdl =
+
     let pkg = pkg_of_mdl mdl in
 
     let mdl_path, _ =
@@ -183,7 +201,19 @@ let read_all_entries () =
 
           if EzString.starts_with file ~prefix:"ENTRY." then
             let entry = read_entry ( dir // file ) in
+            begin 
+              match entry with
+              | Module mdl -> 
+                let vals_file = "VALS." ^ snd @@ EzString.cut_at file '.' in 
+                if EzFile.exists (dir // vals_file) then
+                begin
+                  let vals = read_val (dir // vals_file) in 
+                  mdl.mdl_vals <- vals
+                end
+              | _ -> ();
+            end;
             entries := entry :: !entries
+          
 
         ) ( try Sys.readdir dir with _ -> [||] )
     ) ( Sys.readdir dir ) ;

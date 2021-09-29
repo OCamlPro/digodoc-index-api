@@ -1,3 +1,4 @@
+
 type version = {
   v_db: string;
   v_db_version: int;
@@ -33,6 +34,7 @@ type module_entry = {
   mdl_opam_name : string;
   mdl_opam_version: string;
   mdl_libs : library_entry list;
+  mutable mdl_vals : (string * string) list;
 }
 
 type response = {

@@ -62,6 +62,14 @@ let init () =
         primary key (mdl_id, mdl_lib_id)
       )|};
 
+      {|create table module_vals(
+        mdl_id int not null references module_index(mdl_id),
+        mdl_opam_name varchar not null references opam_index(opam_name),
+        mdl_ident varchar not null,
+        mdl_val varchar not null, 
+        primary key (mdl_id, mdl_ident)
+      )|}
+
     ]
     ~downgrade:[
       {|ALTER TABLE library_index DROP CONSTRAINT library_index_lib_opam_fkey|};
@@ -69,12 +77,15 @@ let init () =
       {|ALTER TABLE module_index DROP CONSTRAINT module_index_mdl_opam_fkey|};
       {|ALTER TABLE module_libraries DROP CONSTRAINT module_libraries_mdl_id_fkey|};
       {|ALTER TABLE module_libraries DROP CONSTRAINT module_libraries_mdl_lib_id_fkey|};
+      {|ALTER TABLE module_vals DROP CONSTRAINT module_vals_mdl_id_fkey|};
+      {|ALTER TABLE module_vals DROP CONSTRAINT module_vals_mdl_opam_name_fkey|};
 
       {|drop table opam_index|};
       {|drop table library_index|};
       {|drop table meta_index|};
       {|drop table module_index|};
       {|drop table module_libraries|};
+      {|drop table module_vals|}
     ]
 ;;
 

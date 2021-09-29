@@ -21,8 +21,12 @@ let insert_meta {meta_name; meta_opam} =
   [%pgsql dbh "insert into meta_index values ($meta_name, $meta_opam)"] 
 
 let insert_module 
-  {mdl_id; mdl_name; mdl_path; mdl_opam_name; mdl_libs; _} =
+  {mdl_id; mdl_name; mdl_path; mdl_opam_name; mdl_libs; mdl_vals; _} =
   with_dbh >>> fun dbh ->
   let%lwt _ = [%pgsql dbh "insert into module_index values ($mdl_id, $mdl_name, $mdl_path, $mdl_opam_name)"] in
-  Lwt_list.iter_s (fun lib ->
-    [%pgsql dbh "insert into module_libraries values ($mdl_id, ${lib.lib_id}, ${lib.lib_name})"] ) mdl_libs
+  let%lwt _ = 
+    Lwt_list.iter_s (fun lib ->
+      [%pgsql dbh "insert into module_libraries values ($mdl_id, ${lib.lib_id}, ${lib.lib_name})"] ) mdl_libs
+  in
+    Lwt_list.iter_s (fun (ident,vall) ->
+      [%pgsql dbh "insert into module_vals values ($mdl_id, $mdl_opam_name, $ident, $vall)"] ) mdl_vals
