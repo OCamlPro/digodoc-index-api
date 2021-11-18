@@ -6,6 +6,7 @@ VERSION:=1.0
 .EXPORT_ALL_VARIABLES:
 PGDATABASE:=digodoc
 API_PORT:=49002
+DIGODOC_DIR:=<digodoc_docs_dir>
 
 all: build api-server
 
