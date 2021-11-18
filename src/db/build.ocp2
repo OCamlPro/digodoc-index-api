@@ -4,11 +4,6 @@ OCaml.library("db-versions", ocaml + {
   requires = [ "ez-pgocaml"; "misc" ];
 });
 
-OCaml.library("db-misc", ocaml + {
-  files = [ "misc_db.ml" ];
-  requires = [ "common" ];
-});
-
 OCaml.library("db-lwt", ocaml + {
   files = [ "monad_lwt.ml"; "db_lwt.ml", pp_pgocaml ];
   requires = [ "lwt.unix"; "misc"; "pgocaml"; "ez-pgocaml" ];

@@ -1,13 +1,19 @@
 (rule
  (action
   (write-file pConfig.ml
-   "let project = \"%{env:PROJECT_NAME=}\"
+"(** Server configuration *)
+ 
 let database = \"%{env:PGDATABASE=}\"
+(** Database name *)
+
 let digodoc_dir = \"%{env:DIGODOC_DIR=}\"
-let api_host = \"%{env:API_HOST=}\"
-let api_port = %{env:API_PORT=}")))
+(** Digodoc's indexated directory *)
+
+let api_port = %{env:API_PORT=}
+(** Api port *)")))
 
 (library
- (name project_config)
+ (name config)
+ (public_name digodoc-index-api.config)
  (wrapped false)
  (modules pConfig))

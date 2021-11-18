@@ -1,5 +1,6 @@
 (library
  (name api_services)
+ (public_name digodoc-index-api.services)
  (wrapped false)
  (modules encoding services)
  (preprocess (pps ppx_deriving_encoding))
@@ -7,24 +8,27 @@
 
 (library
  (name api_lib)
+ (public_name digodoc-index-api.lib)
  (wrapped false)
  (modules handlers api)
- (libraries ez_api.server api_services db_lwt indexer))
+ (libraries ez_api.server api_services db indexer))
 
 (library
  (name indexer)
+ (public_name digodoc-index-api.indexer)
  (wrapped false)
  (modules index)
- (libraries ez_file data_common db_lwt)
+ (libraries ez_file data_common db)
  (preprocess (pps pgocaml_ppx lwt_ppx)))
 
 (executable
  (name api_server)
+ (public_name digodoc_index_api)
  (modules api_server)
  (libraries api_lib indexer)
  (preprocess (pps pgocaml_ppx lwt_ppx)))
 
 (executable
  (name openapi)
- (modules openapi doc)
+ (modules openapi)
  (libraries api_lib ez_api.openAPI))

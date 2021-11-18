@@ -1,4 +1,5 @@
 (executable
  (name db_updater)
+ (public_name digodoc-index-api.db_updater)
  (modules db_updater)
  (libraries versions))

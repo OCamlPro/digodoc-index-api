@@ -1,24 +1,35 @@
 (lang dune 2.4)
-(name digodoc-indexer)
+(name digodoc-index-api)
 
-(source (uri git://gitlab.com/o-labs/skeleton))
+(source (github OCamlPro/digodoc-index-api))
+
+; TODO : ocamlpro licence
 (license MIT)
-(authors "John Doe")
-(maintainers "john.doe@origin-labs.com")
-(homepage https://gitlab.com/o-labs/skeleton)
-(bug_reports https://gitlab.com/o-labs/skeleton/-/issues)
+
+(authors "Mohamed Hernouf")
+(maintainers "mohamed.hernouf@ocamlpro.com")
+(homepage https://github.com/OCamlPro/digodoc-index-api)
+(bug_reports https://github.com/OCamlPro/digodoc-index-api/issues)
 
 (generate_opam_files true)
 
 (package
- (name digodoc-indexer)
- (synopsis "Indexer for digodoc entries")
+ (name digodoc-index-api)
+ (synopsis "Index API server for digodoc DB")
  (depends
-  vue-jsoo
-  ez-api
+  ez_api
+  odoc
+  merlin
+  dune
   calendar
   geoip
+  lwt_ppx
   cohttp-lwt-unix
+  websocket-lwt-unix
+  tls
+  cohttp-lwt-jsoo
   re
-  pgocaml_ppx
-  ez-pgocaml))
+  (pgocaml_ppx ( >= 4.3.0))
+  ez_pgocaml
+  (ppx_deriving_encoding ( >= 0.2.2 ))
+  ))

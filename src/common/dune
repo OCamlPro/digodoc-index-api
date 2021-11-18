@@ -1,10 +1,12 @@
 (library
  (name misc)
+ (public_name digodoc-index-api.misc)
  (modules misc)
- (libraries project_config stdlib-shims))
+ (libraries config stdlib-shims))
 
 (library
  (name data_common)
+ (public_name digodoc-index-api.data_common)
  (wrapped false)
- (modules data_types utils)
+ (modules data_types)
  (libraries misc))

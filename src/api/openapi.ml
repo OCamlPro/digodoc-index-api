@@ -1,4 +1,5 @@
+(** Entry module for openapi executable, that creates API spec documentation *)
+
 let () =
   let sections = Services.sections in
-  let docs = Doc.doc in
-  EzOpenAPI.executable ~sections ~docs
+  EzOpenAPI.executable ~sections ~docs:[]

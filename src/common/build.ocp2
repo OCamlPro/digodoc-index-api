@@ -4,6 +4,6 @@ OCaml.library("misc", ocaml + {
 });
 
 OCaml.library("common", ocaml + {
-  files = [ "data_types.ml"; "utils.ml" ];
+  files = [ "data_types.ml" ];
   requires = [ "misc" ];
 });

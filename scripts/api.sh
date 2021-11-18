@@ -1,7 +1,7 @@
 #!/bin/bash
 
-WD=.
-CONFIG=$WD/config/api_conf.json
+WD=<wd_path>
+CONFIG=$WD/config/api_config.json
 
 case "$1" in
     start)

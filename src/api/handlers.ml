@@ -1,12 +1,13 @@
 open Lwt.Infix
 open Data_types
 
-let to_api p = Lwt.bind p EzAPIServerUtils.return
+(** Module that defines behaviour for every service from [Services] module. *)
 
-let version _params () = to_api (
-    Db.get_version () >|= fun v_db_version ->
-    Ok { v_db = PConfig.database; v_db_version })
+let to_api p = Lwt.bind p EzAPIServerUtils.return
+(** Encapsulates promise value to answer [EzAPIServerUtils.Answer.t] *)
 
 let generate _params () = to_api (
     Index.generate () >|= fun generated ->
     Ok { generated })
+(** Handler for [Services.generate] service. Looks up for content in directory
+    [PConfig.digodoc_dir] and fills Digodoc DB. *)
