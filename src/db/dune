@@ -1,13 +1,11 @@
 (library
  (name versions)
- (public_name digodoc-index-api.versions)
  (modules versions)
  (preprocess (pps pgocaml_ppx))
  (libraries ez_pgocaml misc))
 
 (library
  (name db)
- (public_name digodoc-index-api.db)
  (wrapped false)
  (modules monad_lwt db_lwt db)
  (libraries lwt.unix data_common versions)

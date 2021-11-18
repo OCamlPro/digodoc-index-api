@@ -8,14 +8,12 @@
 
 (library
  (name api_lib)
- (public_name digodoc-index-api.lib)
  (wrapped false)
  (modules handlers api)
  (libraries ez_api.server api_services db indexer))
 
 (library
  (name indexer)
- (public_name digodoc-index-api.indexer)
  (wrapped false)
  (modules index)
  (libraries ez_file data_common db)
