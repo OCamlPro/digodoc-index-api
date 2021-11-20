@@ -21,7 +21,6 @@
 
 (executable
  (name api_server)
- (public_name digodoc_index_api)
  (modules api_server)
  (libraries api_lib indexer)
  (preprocess (pps pgocaml_ppx lwt_ppx)))

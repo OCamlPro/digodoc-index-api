@@ -18,6 +18,7 @@
  (synopsis "Index API server for digodoc DB")
  (depends
   ez_api
+  ez_file
   odoc
   merlin
   dune

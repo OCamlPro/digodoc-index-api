@@ -7,5 +7,4 @@
  (name data_common)
  (public_name digodoc-index-api.data_common)
  (wrapped false)
- (modules data_types)
- (libraries misc))
+ (modules data_types))
