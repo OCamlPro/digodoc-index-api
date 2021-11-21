@@ -12,6 +12,7 @@ module MakeRegisterer(S: module type of Services)(H:module type of Handlers) = s
     (* Save all services and associated to them handlers *)
     dir
     |> register S.generate H.generate
+    |> register S.sources H.sources
 
 end
 

@@ -8,6 +8,8 @@ homepage: "https://github.com/OCamlPro/digodoc-index-api"
 bug-reports: "https://github.com/OCamlPro/digodoc-index-api/issues"
 depends: [
   "ez_api"
+  "ez_file"
+  "ez_search"
   "odoc"
   "merlin"
   "dune"
