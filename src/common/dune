@@ -1,5 +1,6 @@
 (library
  (name misc)
+ (public_name digodoc-index-api.misc)
  (modules misc)
  (libraries config stdlib-shims))
 
