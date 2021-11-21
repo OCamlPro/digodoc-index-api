@@ -20,8 +20,15 @@ ALTER ROLE <user> CREATEDB;
 ALTER ROLE <user> SET search_path TO db, public;
 ```
 
-Before indexation you should generate your documentation with digodoc. It should produces directory ```_digodoc/docs``` under
-its workspace. This directory is required by Index API, so you should remplace variable ```<digodoc_docs_dir>``` by absolute path to this directory in *Makefile*. 
+Then add a new repository to opam to be able to get some of depependencies like ```ez_search```:
+
+```bash
+opam repo add ocp https://github.com/OCamlPro/ocp-opam-repository
+opam update
+``` 
+
+Before indexation you should generate your documentation with digodoc. It should produces directory ```_digodoc``` under
+its workspace. This directory is required by Index API, so you should remplace variable ```<digodoc_dir>``` by absolute path to this directory in *Makefile*. 
 
 ## Building Dependencies
 

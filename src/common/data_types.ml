@@ -35,7 +35,7 @@ type module_entry = {
     extracted from meta file. *)
 
 (** Data structure that is indexed from 'ENTRY' and other meta files 
-    situated under [PConfig.digodoc_dir] directory *)
+    situated under [Index.docs_dir] directory *)
 type entry =
   | Module of module_entry
   | Library of library_entry

@@ -1,12 +1,12 @@
 PROJECT_NAME:=digodoc-index-api
-API_HOST:=http://localhost:11001
+API_HOST:=http://localhost:49002
 CONTACT_EMAIL:=mohamed.hernouf@ocamlpro.com
 VERSION:=1.0
 
 .EXPORT_ALL_VARIABLES:
 PGDATABASE:=digodoc
 API_PORT:=49002
-DIGODOC_DIR:=<digodoc_docs_dir>
+DIGODOC_DIR:=<digodoc_dir>
 
 all: build api-server
 

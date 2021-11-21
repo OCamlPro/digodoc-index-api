@@ -16,7 +16,7 @@
  (name indexer)
  (wrapped false)
  (modules index)
- (libraries ez_file data_common db)
+ (libraries ez_file data_common db ez_search)
  (preprocess (pps pgocaml_ppx lwt_ppx)))
 
 (executable

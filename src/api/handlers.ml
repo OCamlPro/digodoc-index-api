@@ -10,4 +10,10 @@ let generate _params () = to_api (
     Index.generate () >|= fun generated ->
     Ok { generated })
 (** Handler for [Services.generate] service. Looks up for content in directory
-    [PConfig.digodoc_dir] and fills Digodoc DB. *)
+    [Index.docs_dir] and fills Digodoc DB. *)
+
+let sources _params () = to_api (
+    Index.sources () >|= fun generated ->
+    Ok { generated })
+(** Handler for [Services.sources] service. Looks up for content in directory
+    [Index.sources_dir] and indaxate it in [PConfig.digodoc_dir]/sources_db . *)
