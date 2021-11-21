@@ -7,7 +7,7 @@ let database = \"%{env:PGDATABASE=}\"
 (** Database name *)
 
 let digodoc_dir = \"%{env:DIGODOC_DIR=}\"
-(** Digodoc's indexated directory *)
+(** Digodoc's generated directory *)
 
 let api_port = %{env:API_PORT=}
 (** Api port *)")))

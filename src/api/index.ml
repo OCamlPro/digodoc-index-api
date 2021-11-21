@@ -1,19 +1,15 @@
-(**************************************************************************)
-(*                                                                        *)
-(*  Copyright (c) 2020 OCamlPro SAS & Origin Labs SAS                     *)
-(*                                                                        *)
-(*  All rights reserved.                                                  *)
-(*  This file is distributed under the terms of the GNU Lesser General    *)
-(*  Public License version 2.1, with the special exception on linking     *)
-(*  described in the LICENSE.md file in the root directory.               *)
-(*                                                                        *)
-(**************************************************************************)
 
 (** Module that defines all indexation functions subsequent DB completion. *)
 
 open EzFile.OP
 open EzCompat
 open Data_types
+open Ez_search.V1
+
+(** {1 Documentation} *)
+
+let docs_dir = PConfig.digodoc_dir // "docs"
+(** Documentation directory that will be indexated *)
 
 let module_cut m =
   let rec iter m i len =
@@ -54,7 +50,7 @@ let pkg_of_mdl mdl =
       else
         let pkg =
           Printf.sprintf "MODULE.%s__@%s.%s" pack mdl.mdl_opam_name version in
-        if Sys.file_exists (PConfig.digodoc_dir // pkg) then
+        if Sys.file_exists (docs_dir // pkg) then
           pkg
         else
           Printf.sprintf "MODULE.%s@%s.%s" pack mdl.mdl_opam_name version
@@ -166,7 +162,7 @@ let fill_module_index state =
            However, when M already exists (written by the user),
            then the generated module is called M__. *)
         let path = Printf.sprintf "docs/%s/%s__/%s/index.html" pkg pack alias in
-        if Sys.file_exists (PConfig.digodoc_dir // path) then
+        if Sys.file_exists (docs_dir // path) then
           path, Printf.sprintf "%s__.%s" pack alias
         else
           Printf.sprintf "docs/%s/%s/%s/index.html" pkg pack alias,
@@ -200,9 +196,8 @@ let fill_module_index state =
 
 let read_all_entries () =
   let entries = ref [] in
-  let dir = PConfig.digodoc_dir in
   Array.iter (fun pkg ->
-    let dir = dir // pkg in
+    let dir = docs_dir // pkg in
     Array.iter (fun file ->
       (* Read 'ENTRY._' file *)
       if EzString.starts_with file ~prefix:"ENTRY." then
@@ -222,10 +217,10 @@ let read_all_entries () =
         ) 
       (try Sys.readdir dir with _ -> [||])
     ) 
-    (Sys.readdir dir) ;
+    (Sys.readdir docs_dir) ;
   Printf.eprintf "%d entries read\n%!" ( List.length !entries ) ;
   !entries
-(** Iterates over [PConfig.digodoc_dir] directory and extracts all found
+(** Iterates over [docs_dir] directory and extracts all found
     information from meta files in order to create corresponding [entry].
     Every module should have additional file 'VAL.MODULE._' that lists all 
     module's values and their types. *)
@@ -253,3 +248,47 @@ let generate () =
     Sources aren't indexated because all information about them
     could be get from package entry. If indexation stage doesn't 
     occur errors then returns true otherwise returns false. *)
+
+(** {1 Sources} *)
+
+(** {1 Documentation } *)
+
+let sources_dir = PConfig.digodoc_dir // "sources_files"
+(** Sources directory that will be indexated *)
+
+let sources_db_dir = PConfig.digodoc_dir // "sources_db"
+(** Place where API will safe indexation artefacts *)
+
+let sources_db_name = "db" 
+(** Place where API will safe indexation artefacts *)
+
+let select_ocaml path =
+  let basename = Filename.basename path in
+  let basename, ext = EzString.rcut_at basename '.' in
+  match String.lowercase_ascii basename with
+  | "dune"
+  | "makefile" -> true
+  | _ -> begin 
+    match ext with
+    | "ml" | "mll" | "mly" | "mli" -> true
+    | _ -> false
+  end 
+(** Function that says if filename under the [path] is one of specific for OCaml files *)    
+
+let sources () =
+  Lwt.catch
+    (fun () -> 
+      Printf.eprintf "Indexationg sources...\n%!";
+      EzFile.make_dir sources_db_dir;
+      EzSearch.index_directory 
+        ~db_dir:sources_db_dir 
+        ~select:select_ocaml 
+        ~db_name:sources_db_name
+        sources_dir;
+      Printf.eprintf "Indexation done.\n%!"; 
+      Lwt.return_true
+    )
+    (function _ -> Lwt.return_false)
+(** Sources indexation function. Uses ```ez_search``` package that provides functionalities to create 
+    DB with sources and to make different type of search inside. If indexation stage doesn't occur 
+    errors then returns true otherwise returns false.*)
