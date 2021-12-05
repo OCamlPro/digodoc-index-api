@@ -51,11 +51,7 @@ config/api_config.json:
 	@mkdir -p config
 	@echo "{\"port\": $(API_PORT)}" > config/api_config.json
 
-depext:
-	opam install opam-depext -y
-	opam depext geoip -y
-
-init: depext build-deps config
+init: build-deps config
 
 git-init:
 	rm -rf .git
