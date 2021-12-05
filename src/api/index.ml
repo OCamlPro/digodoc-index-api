@@ -259,32 +259,62 @@ let sources_dir = PConfig.digodoc_dir // "sources_files"
 let sources_db_dir = PConfig.digodoc_dir // "sources_db"
 (** Place where API will safe indexation artefacts *)
 
-let sources_db_name = "db" 
-(** Place where API will safe indexation artefacts *)
+let ocaml_db_name = "ocaml_db" 
+(** Place where API will safe indexation artefacts for .ml, .mli, .mll, .mly *)
+
+let dune_db_name = "dune_db"
+(** Place where API will safe indexation artefacts for dune files *)
+
+let makefile_db_name = "makefile_db"
+(** Place where API will safe indexation artefacts for Makefiles *)
 
 let select_ocaml path =
   let basename = Filename.basename path in
-  let basename, ext = EzString.rcut_at basename '.' in
-  match String.lowercase_ascii basename with
-  | "dune"
-  | "makefile" -> true
-  | _ -> begin 
-    match ext with
-    | "ml" | "mll" | "mly" | "mli" -> true
-    | _ -> false
-  end 
+  let _, ext = EzString.rcut_at basename '.' in
+  match ext with
+  | "ml" | "mll" | "mly" | "mli" -> true
+  | _ -> false 
 (** Function that says if filename under the [path] is one of specific for OCaml files *)    
+
+let select_dune path =
+  let basename = Filename.basename path in
+  match basename with
+  | "dune" | "dune-project" | "dune-workspace" -> true
+  | _ -> false 
+(** Function that says if filename under the [path] is one of specific for Dune files *) 
+
+let select_makefile path =
+  let basename = Filename.basename path in
+  match String.lowercase_ascii basename with
+  | "makefile" -> true
+  | _ -> false 
+(** Function that says if filename under the [path] is one of specific for Dune files *) 
 
 let sources () =
   Lwt.catch
     (fun () -> 
-      Printf.eprintf "Indexationg sources...\n%!";
       EzFile.make_dir sources_db_dir;
+      Printf.eprintf "Indexating ocaml files...\n%!";
+      (* Indexate ocaml files *)
       EzSearch.index_directory 
         ~db_dir:sources_db_dir 
         ~select:select_ocaml 
-        ~db_name:sources_db_name
+        ~db_name:ocaml_db_name
         sources_dir;
+      (* Indexate dune files *)
+      Printf.eprintf "Indexating dune files...\n%!";
+      EzSearch.index_directory 
+        ~db_dir:sources_db_dir 
+        ~select:select_dune 
+        ~db_name:dune_db_name
+        sources_dir;
+      (* Indexate Makefiles *)
+      Printf.eprintf "Indexating makefiles...\n%!";      
+      EzSearch.index_directory 
+        ~db_dir:sources_db_dir 
+        ~select:select_makefile 
+        ~db_name:makefile_db_name
+        sources_dir;      
       Printf.eprintf "Indexation done.\n%!"; 
       Lwt.return_true
     )
