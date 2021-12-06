@@ -23,7 +23,7 @@ ALTER ROLE <user> SET search_path TO db, public;
 Then add a new repository to opam to be able to get some of depependencies like ```ez_search```:
 
 ```bash
-opam repo add ocp https://github.com/OCamlPro/ocp-opam-repository
+opam repo add ocp https://github.com/OCamlPro/ocp-opam-repository.git
 opam update
 ``` 
 
@@ -100,6 +100,17 @@ systemctl stop digodoc_index_api.service
 ```
 
 Launching server as a Linux service will also create directory *logs/*.
+
+## Indexation
+
+You should indexate entries, elements, sources after docs generation vy **digodoc**. It's necessary to do it before launching [Search Api](https://github.com/OCamlPro/digodoc-search-api):
+
+```bash
+# Indexate documentation entries/elements
+curl "localhost:49002/generate"
+# Indexate sources
+curl "localhost:49002/sources"
+```
 
 ## DB versions
 
