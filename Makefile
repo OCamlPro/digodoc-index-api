@@ -6,7 +6,7 @@ VERSION:=1.0
 .EXPORT_ALL_VARIABLES:
 PGDATABASE:=digodoc
 API_PORT:=49002
-DIGODOC_DIR:=<digodoc_dir>
+DIGODOC_DIR:=/home/hernouf/DIGODOC/digodoc/_digodoc
 
 all: build api-server
 
@@ -18,7 +18,7 @@ db-update: db-updater
 
 db-downgrade: db-updater
 	$(eval DBVERSION := $(shell psql $(PGDATABASE) -c "select value from ezpg_info where name='version'" -t -A))
-	_build/default/src/db/db-update/db_updater.exe --allow-downgrade --database $(DATABASE) --target `expr $(DBVERSION) - 1`
+	_build/default/src/db/db-update/db_updater.exe --allow-downgrade --target `expr $(DBVERSION) - 1` --database $(PGDATABASE)
 
 db-version:
 	psql $(PGDATABASE) -c "select value from ezpg_info where name='version'" -t -A
