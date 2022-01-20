@@ -61,6 +61,7 @@ let init () =
       )|};
       {|create table module_vals(
         mdl_id int not null references module_index(mdl_id),
+        mdl_name varchar not null,
         mdl_opam_name varchar not null references opam_index(opam_name),
         mdl_ident varchar not null,
         mdl_val varchar not null, 
