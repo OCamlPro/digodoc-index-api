@@ -153,7 +153,7 @@ let fill_module_index state =
   let add_module pack alias mdl =
     let pkg = pkg_of_mdl mdl in
     (* TODO: to store correctly module name *)
-    let mdl_path, _ =
+    let mdl_path, mdl_name =
       if alias = "" then
         Printf.sprintf "docs/%s/%s/index.html" pkg mdl.mdl_name, mdl.mdl_name
       else
@@ -171,6 +171,7 @@ let fill_module_index state =
     let mdl_id = Int32.of_int !cpt in
     mdl.mdl_id <- mdl_id;
     mdl.mdl_path <- mdl_path;
+    mdl.mdl_name <- mdl_name;
     cpt:= !cpt + 1;
     (* Find id for every library *)
     List.iter (fun lib1 -> 

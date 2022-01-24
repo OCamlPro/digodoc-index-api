@@ -23,7 +23,7 @@ type meta_entry = {
 
 type module_entry = {
   mutable mdl_id : int32;
-  mdl_name : string;
+  mutable mdl_name : string;
   mdl_basename: string;
   mutable mdl_path : string;
   mdl_opam_name : string;
