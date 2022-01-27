@@ -6,7 +6,7 @@ VERSION:=1.0
 .EXPORT_ALL_VARIABLES:
 PGDATABASE:=digodoc
 API_PORT:=49002
-DIGODOC_DIR:=/home/hernouf/DIGODOC/digodoc/_digodoc
+DIGODOC_DIR:=/home/dariocp/Programmation/OCPro/digodoc/_digodoc
 
 all: build api-server
 
@@ -27,7 +27,7 @@ docs: build
 	dune build @doc
 	dune build @doc-private
 	mkdir -p docs
-	rm -rf docs/*  
+	rm -rf docs/*
 	cp -r _build/default/_doc/_html/* docs/.
 
 build: db-update

@@ -21,6 +21,17 @@ type meta_entry = {
 }
 (** Information about a meta extracted from meta file. *)
 
+type type_entry = {
+  type_id: int32;
+  mdl_id: int32;
+  mdl_name: string;
+  opam_name: string;
+  ident: string;
+  constructors: string;
+}
+
+(** Information about a given type declaration *)
+
 type module_entry = {
   mutable mdl_id : int32;
   mutable mdl_name : string;
@@ -30,11 +41,12 @@ type module_entry = {
   mdl_opam_version: string;
   mdl_libs : library_entry list;
   mutable mdl_vals : (string * string) list;
+  mutable mdl_types : type_entry list;
 }
-(** Information about a module, its libraries and its values 
+(** Information about a module, its libraries and its values
     extracted from meta file. *)
 
-(** Data structure that is indexed from 'ENTRY' and other meta files 
+(** Data structure that is indexed from 'ENTRY' and other meta files
     situated under [Index.docs_dir] directory *)
 type entry =
   | Module of module_entry
