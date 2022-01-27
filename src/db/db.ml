@@ -33,17 +33,16 @@ module Generate = struct
       [%pgsql dbh "insert into module_libraries values ($mdl_id, ${lib.lib_id}, ${lib.lib_name})"] ) mdl_libs
     >>= function () -> Lwt_list.iter_s (fun (ident,vall) ->
       (* insert a row for every module's value *)
-      [%pgsql dbh "insert into module_vals values ($mdl_id, $mdl_opam_name, $ident, $vall)"] ) mdl_vals
-    >>= function () -> Lwt_list.iter_s (fun {type_id; mdl_id; mdl_name;opam_name;ident;constructors} ->
+      [%pgsql dbh "insert into module_vals values ($mdl_id, $mdl_name, $mdl_opam_name, $ident, $vall)"] ) mdl_vals
+    >>= function () -> Lwt_list.iter_s (fun {type_id; ident;constructors} ->
       (* insert a row for every module's types *)
       [%pgsql dbh "insert into module_types values ($mdl_id, $mdl_opam_name, $type_id, $ident)"]
     ) mdl_types
-    >>= function () -> Lwt_list.iter_s (fun {type_id; mdl_id; mdl_name;opam_name;ident;constructors} ->
+    >>= function () -> Lwt_list.iter_s (fun {type_id; ident;constructors} ->
       (* insert a row for every types' signature *)
       [%pgsql dbh "insert into type_signatures values ($type_id, $ident, $constructors)"]
     ) mdl_types
   (** Insert module row and information about its libraries, its values, and its declared types
->>>>>>> 8ba35fd (Add indexation for ocamltypes, add typing for ocamltypes, change db up and downgradings)
       into a corresponding DB table. *)
 end
 (** Module that regroups all DB requests for [Handlers.generate] handler. *)

@@ -23,9 +23,6 @@ type meta_entry = {
 
 type type_entry = {
   type_id: int32;
-  mdl_id: int32;
-  mdl_name: string;
-  opam_name: string;
   ident: string;
   constructors: string;
 }

@@ -173,10 +173,7 @@ let type_id_cnt =
 let list_type_declarations mdl file =
   let init_type mdl ident =
       let type_id = Int32.of_int (type_id_cnt ()) in
-      let mdl_id = mdl.mdl_id in
-      let mdl_name = mdl.mdl_name in
-      let opam_name = mdl.mdl_opam_name in
-      {type_id; mdl_id; mdl_name; opam_name; ident; constructors = "";}
+      {type_id; ident; constructors = "";}
   in
   let types =
     List.map (fun (ident, typkind, typesig) ->
