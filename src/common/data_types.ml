@@ -24,7 +24,7 @@ type meta_entry = {
 type type_entry = {
   type_id: int32;
   ident: string;
-  constructors: string;
+  constructors: string list;
 }
 
 (** Information about a given type declaration *)
@@ -39,6 +39,7 @@ type module_entry = {
   mdl_libs : library_entry list;
   mutable mdl_vals : (string * string) list;
   mutable mdl_types : type_entry list;
+  mutable mdl_classes : type_entry list;
 }
 (** Information about a module, its libraries and its values
     extracted from meta file. *)

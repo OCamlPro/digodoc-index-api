@@ -24,7 +24,7 @@ module Generate = struct
   (** Insert meta row. *)
 
   let insert_module
-    {mdl_id; mdl_name; mdl_path; mdl_opam_name; mdl_libs; mdl_vals; mdl_types} =
+    {mdl_id; mdl_name; mdl_path; mdl_opam_name; mdl_libs; mdl_vals; mdl_types; mdl_classes} =
     with_dbh >>> fun dbh ->
     (* insert module row *)
     [%pgsql dbh "insert into module_index values ($mdl_id, $mdl_name, $mdl_path, $mdl_opam_name)"]
@@ -35,13 +35,24 @@ module Generate = struct
       (* insert a row for every module's value *)
       [%pgsql dbh "insert into module_vals values ($mdl_id, $mdl_name, $mdl_opam_name, $ident, $vall)"] ) mdl_vals
     >>= function () -> Lwt_list.iter_s (fun {type_id; ident;constructors} ->
-      (* insert a row for every module's types *)
       [%pgsql dbh "insert into module_types values ($mdl_id, $mdl_opam_name, $type_id, $ident)"]
-    ) mdl_types
-    >>= function () -> Lwt_list.iter_s (fun {type_id; ident;constructors} ->
+      (* insert a row for every module's types *)
+      >>= function () ->
+      Lwt_list.iter_s (fun cons->
+        [%pgsql dbh "insert into type_signatures values ($type_id, $cons)"]
       (* insert a row for every types' signature *)
-      [%pgsql dbh "insert into type_signatures values ($type_id, $ident, $constructors)"]
-    ) mdl_types
+      ) constructors
+    ) mdl_types;
+
+    >>= function () -> Lwt_list.iter_s (fun {type_id; ident;constructors} ->
+      [%pgsql dbh "insert into module_types values ($mdl_id, $mdl_opam_name, $type_id, $ident)"]
+      (* insert a row for every module's classes *)
+      >>= function () ->
+      Lwt_list.iter_s (fun cons->
+        [%pgsql dbh "insert into type_signatures values ($type_id, $cons)"]
+        (* insert a row for every class' contents *)
+      ) constructors
+    ) mdl_classes
   (** Insert module row and information about its libraries, its values, and its declared types
       into a corresponding DB table. *)
 end

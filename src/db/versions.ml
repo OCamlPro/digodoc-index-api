@@ -73,10 +73,22 @@ let init () =
         type_id int not null primary key,
         ident varchar not null
       )|};
+      {|create table module_classes(
+        mdl_id int not null references module_index(mdl_id),
+        mdl_opam_name varchar not null references opam_index(opam_name),
+        type_id int not null primary key,
+        ident varchar not null
+      )|};
       {|create table type_signatures(
         type_id int not null references module_types(type_id),
-        ident varchar not null,
-        constructors varchar not null
+        constructor varchar not null,
+        primary key (type_id, constructor)
+      )
+    |};
+      {|create table class_signatures(
+        type_id int not null references module_types(type_id),
+        constructor varchar not null,
+        primary key (type_id, constructor)
       )
     |}
   ]
@@ -89,7 +101,9 @@ let init () =
       {|DROP TABLE module_libraries CASCADE|};
       {|DROP TABLE module_vals CASCADE|};
       {|DROP TABLE module_types CASCADE|};
-      {|DROP TABLE type_signatures CASCADE|}
+      {|DROP TABLE module_classes CASCADE|};
+      {|DROP TABLE type_signatures CASCADE|};
+      {|DROP TABLE class_signatures CASCADE|}
     ]
 ;;
 

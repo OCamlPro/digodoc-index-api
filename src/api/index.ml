@@ -93,7 +93,7 @@ let read_entry file =
     mdl_libs ->
       let mdl_libs = List.map library_of_string mdl_libs in
       Module { mdl_id = Int32.of_int 0; mdl_path = ""; mdl_name ; mdl_opam_name ; mdl_opam_version ;
-        mdl_basename ; mdl_libs; mdl_vals = [] ; mdl_types = []}
+        mdl_basename ; mdl_libs; mdl_vals = [] ; mdl_types = []; mdl_classes = []}
   | _lines ->
       Printf.eprintf "Unrecognized format for entry file %S\n%!" file;
       raise Not_found
@@ -171,49 +171,46 @@ let type_id_cnt =
     !count
 
 let list_type_declarations mdl file =
+
   let init_type mdl ident =
       let type_id = Int32.of_int (type_id_cnt ()) in
-      {type_id; ident; constructors = "";}
+      {type_id; ident; constructors = ["..."];}
   in
+
+  let classes, types =
+    List.partition (fun (ident, typkind, typesig) ->
+      match typkind with
+      | "CLASS_OBJ" -> true
+
+      | "TYPE_ABSTRACT" | "TYPE_OPEN" | "TYPE_RECORD" | "TYPE_VARIANT" -> false
+
+      | _s -> Format.eprintf "TYPEKIND ERROR in file %s@.Type declaration preceding: %s \"%s\" (%a)" file typkind ident
+      ( Format.pp_print_list ~pp_sep:(fun fmt () -> Format.fprintf fmt " ") Format.pp_print_string ) typesig;
+failwith "TYPES.m type kind should not occur"
+      ) (read_types file)
+  in
+
   let types =
     List.map (fun (ident, typkind, typesig) ->
       let given_type = init_type mdl ident in
-      let concat = String.concat "\n" in
       match typkind with
-      | "TYPE_OPEN" ->
-          { given_type with constructors = "..." }
+      | "TYPE_OPEN" -> given_type
+      | "TYPE_ABSTRACT" | "TYPE_RECORD" | "TYPE_VARIANT" ->
+          { given_type with constructors = typesig }
+      | _s -> assert false
+    ) types in
+    mdl.mdl_types <- types;
 
-      | "TYPE_ABSTRACT" ->
-          { given_type with constructors = concat typesig }
-
-      | "TYPE_RECORD" ->
-          { given_type with constructors = concat @@ ["{ "] @ typesig @ [" }"] }
-          (* record fields are yet to be indexed, they could be by splitting on ':' *)
-      | "CLASS_OBJ" ->
-          { given_type with constructors = concat @@ ["object"] @ typesig @ ["end"] }
-
-      | "TYPE_VARIANT" ->
-          {
-            given_type with constructors =
-              concat @@ List.map (fun const ->
-                match String.split_on_char '\\' const with
-                | [] -> assert false
-                | [x] -> x
-                | l -> Format.asprintf "%a" ( Format.pp_print_list
-                ~pp_sep:(fun fmt () -> Format.fprintf fmt " of ")
-                Format.pp_print_string ) l
-              ) typesig
-          }
-
-      | _s ->
-          Format.printf "TYPEKIND ERROR in file %s@. Type declaration preceding %s = %a@." file ident
-              ( Format.pp_print_list
-                ~pp_sep:(fun fmt () -> Format.fprintf fmt "")
-                Format.pp_print_string ) typesig;
-          failwith "TYPES.m type kind should not occur"
-      ) (read_types file)
-  in mdl.mdl_types <- types
-  (** This is where all subsequent indexations could be made, are accessible here :
+    let classes =
+      List.map (fun (ident, typkind, typesig) ->
+        let given_type = init_type mdl ident in
+        match typkind with
+        | "CLASS_OBJ" ->
+          { given_type with constructors = typesig }
+        | _s -> assert false
+      ) classes in
+    mdl.mdl_classes <- classes
+  (** Are accessible here :
     - Record fields names and their types
     - Constructors and their arguments
     - Class object and their contents, methods/val/constraints
