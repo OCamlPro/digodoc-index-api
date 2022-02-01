@@ -1,4 +1,4 @@
-(** Module that stores and updates/downgrades differrent versions of DB. 
+(** Module that stores and updates/downgrades differrent versions of DB.
     The verions should correspond for every digodoc's API. *)
 
 let cver = ref 0
@@ -56,7 +56,7 @@ let init () =
       {|create table module_libraries(
         mdl_id int not null references module_index(mdl_id),
         mdl_lib_id int not null references library_index(lib_id),
-        mdl_lib varchar not null, 
+        mdl_lib varchar not null,
         primary key (mdl_id, mdl_lib_id)
       )|};
       {|create table module_vals(
@@ -64,25 +64,48 @@ let init () =
         mdl_name varchar not null,
         mdl_opam_name varchar not null references opam_index(opam_name),
         mdl_ident varchar not null,
-        mdl_val varchar not null, 
+        mdl_val varchar not null,
         primary key (mdl_id, mdl_ident)
-      )|}
-    ]
+      )|};
+      {|create table module_types(
+        mdl_id int not null references module_index(mdl_id),
+        mdl_name varchar not null,
+        mdl_opam_name varchar not null references opam_index(opam_name),
+        type_id int not null primary key,
+        ident varchar not null
+      )|};
+      {|create table module_classes(
+        mdl_id int not null references module_index(mdl_id),
+        mdl_name varchar not null,
+        mdl_opam_name varchar not null references opam_index(opam_name),
+        type_id int not null primary key,
+        ident varchar not null
+      )|};
+      {|create table type_signatures(
+        type_id int not null references module_types(type_id),
+        constructor varchar not null,
+        primary key (type_id, constructor)
+      )
+    |};
+      {|create table class_signatures(
+        type_id int not null references module_classes(type_id),
+        constructor varchar not null,
+        primary key (type_id, constructor)
+      )
+    |}
+  ]
     (* list of instructions to execute to downgrade DB *)
     ~downgrade:[
-      {|ALTER TABLE library_index DROP CONSTRAINT library_index_lib_opam_fkey|};
-      {|ALTER TABLE meta_index DROP CONSTRAINT meta_index_meta_opam_fkey|};
-      {|ALTER TABLE module_index DROP CONSTRAINT module_index_mdl_opam_fkey|};
-      {|ALTER TABLE module_libraries DROP CONSTRAINT module_libraries_mdl_id_fkey|};
-      {|ALTER TABLE module_libraries DROP CONSTRAINT module_libraries_mdl_lib_id_fkey|};
-      {|ALTER TABLE module_vals DROP CONSTRAINT module_vals_mdl_id_fkey|};
-      {|ALTER TABLE module_vals DROP CONSTRAINT module_vals_mdl_opam_name_fkey|};
-      {|drop table opam_index|};
-      {|drop table library_index|};
-      {|drop table meta_index|};
-      {|drop table module_index|};
-      {|drop table module_libraries|};
-      {|drop table module_vals|}
+      {|DROP TABLE opam_index CASCADE|};
+      {|DROP TABLE library_index CASCADE|};
+      {|DROP TABLE meta_index CASCADE|};
+      {|DROP TABLE module_index CASCADE|};
+      {|DROP TABLE module_libraries CASCADE|};
+      {|DROP TABLE module_vals CASCADE|};
+      {|DROP TABLE module_types CASCADE|};
+      {|DROP TABLE module_classes CASCADE|};
+      {|DROP TABLE type_signatures CASCADE|};
+      {|DROP TABLE class_signatures CASCADE|}
     ]
 ;;
 
