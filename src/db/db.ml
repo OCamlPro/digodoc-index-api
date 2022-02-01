@@ -35,7 +35,7 @@ module Generate = struct
       (* insert a row for every module's value *)
       [%pgsql dbh "insert into module_vals values ($mdl_id, $mdl_name, $mdl_opam_name, $ident, $vall)"] ) mdl_vals
     >>= function () -> Lwt_list.iter_s (fun {type_id; ident;constructors} ->
-      [%pgsql dbh "insert into module_types values ($mdl_id, $mdl_opam_name, $type_id, $ident)"]
+      [%pgsql dbh "insert into module_types values ($mdl_id, $mdl_name, $mdl_opam_name, $type_id, $ident)"]
       (* insert a row for every module's types *)
       >>= function () ->
       Lwt_list.iter_s (fun cons->
@@ -45,11 +45,11 @@ module Generate = struct
     ) mdl_types;
 
     >>= function () -> Lwt_list.iter_s (fun {type_id; ident;constructors} ->
-      [%pgsql dbh "insert into module_types values ($mdl_id, $mdl_opam_name, $type_id, $ident)"]
+      [%pgsql dbh "insert into module_classes values ($mdl_id, $mdl_name, $mdl_opam_name, $type_id, $ident)"]
       (* insert a row for every module's classes *)
       >>= function () ->
       Lwt_list.iter_s (fun cons->
-        [%pgsql dbh "insert into type_signatures values ($type_id, $cons)"]
+        [%pgsql dbh "insert into class_signatures values ($type_id, $cons)"]
         (* insert a row for every class' contents *)
       ) constructors
     ) mdl_classes

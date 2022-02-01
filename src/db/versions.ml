@@ -69,12 +69,14 @@ let init () =
       )|};
       {|create table module_types(
         mdl_id int not null references module_index(mdl_id),
+        mdl_name varchar not null,
         mdl_opam_name varchar not null references opam_index(opam_name),
         type_id int not null primary key,
         ident varchar not null
       )|};
       {|create table module_classes(
         mdl_id int not null references module_index(mdl_id),
+        mdl_name varchar not null,
         mdl_opam_name varchar not null references opam_index(opam_name),
         type_id int not null primary key,
         ident varchar not null
@@ -86,7 +88,7 @@ let init () =
       )
     |};
       {|create table class_signatures(
-        type_id int not null references module_types(type_id),
+        type_id int not null references module_classes(type_id),
         constructor varchar not null,
         primary key (type_id, constructor)
       )

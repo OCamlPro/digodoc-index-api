@@ -170,11 +170,22 @@ let type_id_cnt =
     incr count;
     !count
 
+let class_id_cnt =
+  let count = ref (-1) in
+  fun () ->
+    incr count;
+    !count
+
 let list_type_declarations mdl file =
 
   let init_type mdl ident =
       let type_id = Int32.of_int (type_id_cnt ()) in
-      {type_id; ident; constructors = ["..."];}
+      {type_id; ident; constructors = [];}
+  in
+
+  let init_class mdl ident =
+    let type_id = Int32.of_int (class_id_cnt ()) in
+      {type_id; ident; constructors = [];}
   in
 
   let classes, types =
@@ -194,8 +205,7 @@ failwith "TYPES.m type kind should not occur"
     List.map (fun (ident, typkind, typesig) ->
       let given_type = init_type mdl ident in
       match typkind with
-      | "TYPE_OPEN" -> given_type
-      | "TYPE_ABSTRACT" | "TYPE_RECORD" | "TYPE_VARIANT" ->
+      | "TYPE_ABSTRACT" | "TYPE_RECORD" | "TYPE_VARIANT" | "TYPE_OPEN" ->
           { given_type with constructors = typesig }
       | _s -> assert false
     ) types in
@@ -203,7 +213,7 @@ failwith "TYPES.m type kind should not occur"
 
     let classes =
       List.map (fun (ident, typkind, typesig) ->
-        let given_type = init_type mdl ident in
+        let given_type = init_class mdl ident in
         match typkind with
         | "CLASS_OBJ" ->
           { given_type with constructors = typesig }
