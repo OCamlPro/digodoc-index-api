@@ -132,13 +132,20 @@ let read_types file =
         | [] -> List.rev acc
         | ident::typ::sign ->
 
+            let rec skip_empty =
+              function
+              | [] -> []
+              | ""::r -> skip_empty r
+              | l -> l
+            in
+
             let get_signature_and_continue =
               let rec aux_get_sig acc =
                 function
                   | [] -> List.rev acc, []
                   | x::r ->
                       match x with
-                      | "" -> List.rev acc, r
+                      | "" -> List.rev acc, skip_empty r
                       | s -> aux_get_sig (s::acc) r
                 in fun file_sig -> aux_get_sig [] file_sig
               in
