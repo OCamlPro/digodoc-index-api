@@ -78,6 +78,7 @@ let init () =
         mdl_id int not null references module_index(mdl_id),
         mdl_name varchar not null,
         mdl_opam_name varchar not null references opam_index(opam_name),
+        is_class_type boolean not null,
         type_id int not null primary key,
         ident varchar not null
       )|};
