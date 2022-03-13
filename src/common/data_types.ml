@@ -21,12 +21,12 @@ type meta_entry = {
 }
 (** Information about a meta extracted from meta file. *)
 
-type type_entry = {
+type type_class_entry = {
   type_id: int32;
   ident: string;
+  is_class_type: bool option;
   constructors: string list;
 }
-
 (** Information about a given type declaration *)
 
 type module_entry = {
@@ -38,8 +38,8 @@ type module_entry = {
   mdl_opam_version: string;
   mdl_libs : library_entry list;
   mutable mdl_vals : (string * string) list;
-  mutable mdl_types : type_entry list;
-  mutable mdl_classes : type_entry list;
+  mutable mdl_types : type_class_entry list;
+  mutable mdl_classes : type_class_entry list;
 }
 (** Information about a module, its libraries and its values
     extracted from meta file. *)

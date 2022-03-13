@@ -187,18 +187,18 @@ let list_type_declarations mdl file =
 
   let init_type mdl ident =
       let type_id = Int32.of_int (type_id_cnt ()) in
-      {type_id; ident; constructors = [];}
+      {type_id; ident; is_class_type = None; constructors = [];}
   in
 
   let init_class mdl ident =
     let type_id = Int32.of_int (class_id_cnt ()) in
-      {type_id; ident; constructors = [];}
+      {type_id; ident; is_class_type = Some false; constructors = [];}
   in
 
   let classes, types =
     List.partition (fun (ident, typkind, typesig) ->
       match typkind with
-      | "CLASS_OBJ" -> true
+      | "CLASS" | "CLASS_TYPE" -> true
 
       | "TYPE_ABSTRACT" | "TYPE_OPEN" | "TYPE_RECORD" | "TYPE_VARIANT" -> false
 
@@ -222,8 +222,10 @@ failwith "TYPES.m type kind should not occur"
       List.map (fun (ident, typkind, typesig) ->
         let given_type = init_class mdl ident in
         match typkind with
-        | "CLASS_OBJ" ->
+        | "CLASS" ->
           { given_type with constructors = typesig }
+        | "CLASS_TYPE" ->
+          { given_type with is_class_type = Some true; constructors = typesig }
         | _s -> assert false
       ) classes in
     mdl.mdl_classes <- classes
