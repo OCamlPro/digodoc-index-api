@@ -184,30 +184,24 @@ let class_id_cnt =
     !count
 
 let list_type_declarations mdl file =
-
   let init_type mdl ident =
       let type_id = Int32.of_int (type_id_cnt ()) in
       {type_id; ident; is_class_type = None; constructors = [];}
   in
-
   let init_class mdl ident =
     let type_id = Int32.of_int (class_id_cnt ()) in
       {type_id; ident; is_class_type = Some false; constructors = [];}
   in
-
   let classes, types =
     List.partition (fun (ident, typkind, typesig) ->
       match typkind with
       | "CLASS" | "CLASS_TYPE" -> true
-
       | "TYPE_ABSTRACT" | "TYPE_OPEN" | "TYPE_RECORD" | "TYPE_VARIANT" -> false
-
       | _s -> Format.eprintf "TYPEKIND ERROR in file %s@.Type declaration preceding: %s \"%s\" (%a)" file typkind ident
       ( Format.pp_print_list ~pp_sep:(fun fmt () -> Format.fprintf fmt " ") Format.pp_print_string ) typesig;
 failwith "TYPES.m type kind should not occur"
       ) (read_types file)
   in
-
   let types =
     List.map (fun (ident, typkind, typesig) ->
       let given_type = init_type mdl ident in
@@ -217,10 +211,17 @@ failwith "TYPES.m type kind should not occur"
       | _s -> assert false
     ) types in
     mdl.mdl_types <- types;
-
     let classes =
       List.map (fun (ident, typkind, typesig) ->
         let given_type = init_class mdl ident in
+        let typesig = 
+          List.sort_uniq String.compare @@ 
+            List.map (fun cons -> 
+                if String.contains cons ' '
+                then snd @@ EzString.cut_at cons ' '
+                else cons) 
+              typesig
+        in 
         match typkind with
         | "CLASS" ->
           { given_type with constructors = typesig }

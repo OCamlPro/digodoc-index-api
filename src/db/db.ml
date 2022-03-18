@@ -42,13 +42,15 @@ module Generate = struct
         [%pgsql dbh "insert into type_signatures values ($type_id, $cons)"]
       (* insert a row for every types' signature *)
       ) constructors
-    ) mdl_types;
+    ) mdl_types
 
     >>= function () -> Lwt_list.iter_s (fun {type_id; ident; is_class_type; constructors} ->
-      match is_class_type with
-      | Some false -> [%pgsql dbh "insert into module_classes values ($mdl_id, $mdl_name, $mdl_opam_name, FALSE, $type_id, $ident)"]
-      | Some true -> [%pgsql dbh "insert into module_classes values ($mdl_id, $mdl_name, $mdl_opam_name, TRUE, $type_id, $ident)"]
-      | _ -> failwith "should not occur"
+      begin 
+        match is_class_type with
+        | Some false -> [%pgsql dbh "insert into module_classes values ($mdl_id, $mdl_name, $mdl_opam_name, FALSE, $type_id, $ident)"]
+        | Some true -> [%pgsql dbh "insert into module_classes values ($mdl_id, $mdl_name, $mdl_opam_name, TRUE, $type_id, $ident)"]
+        | _ -> failwith "should not occur"
+      end
       (* insert a row for every module's classes *)
       >>= function () ->
       Lwt_list.iter_s (fun cons->
